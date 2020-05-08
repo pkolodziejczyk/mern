@@ -1,0 +1,28 @@
+{
+  "name": "mern",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.2",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.7",
+    "mongoose": "^5.9.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pkolodziejczyk/mern.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pkolodziejczyk/mern/issues"
+  },
+  "homepage": "https://github.com/pkolodziejczyk/mern#readme"
+}
