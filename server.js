@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+// Mondule crypto
+const crypto = require('crypto')
+
 var url = "mongodb://localhost:27017/mydb";
 var portServer = 4242;
 
@@ -47,6 +50,8 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
         if(errors.length>0){
             res.render('register',  { 'errors' : errors });
         }
+        // On crypte le mo de passe avant la sauvegarde
+        user.password = toSha1(user.password);
         user.save()
             .then(user => {
                 res.render('register');
@@ -68,3 +73,12 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
     })
     //db.close();
 });
+
+function toSha1(password){
+    // On crée notre Hasher avec l'algo qu'on veux
+    var shasum = crypto.createHash('sha1');
+    // ce qu'on veux hasher
+    shasum.update(password);
+    // hex => Format de retour hex 012345679abcdef (base 16)
+    return shasum.digest('hex');
+}
