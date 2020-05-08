@@ -38,7 +38,15 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
     userRoutes.route('/register').post(function(req, res) {
         console.log(req.body.login);
         let user = new User(req.body);
+        let errors = [];
+        if(user.password != req.body.confirm_password){
+            errors.push("Mot de passe pas identique");
+        }
+        // TODO les tests qui vont bien.
         console.log(user);
+        if(errors.length>0){
+            res.render('register',  { 'errors' : errors });
+        }
         user.save()
             .then(user => {
                 res.render('register');

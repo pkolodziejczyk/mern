@@ -5,6 +5,10 @@
  </head>
  <body>
  <h4>Fill all the fields to register</h4>
+ <div>
+    <%= errors.join("<br> "); %>
+ </div>
+
  <form action="/register" method="post" name="regform">
  <label for="login">Choose your login:</label><br>
  <input type="text" name="login" placeholder="Login" required><br>
