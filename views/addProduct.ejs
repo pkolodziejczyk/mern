@@ -1,0 +1,22 @@
+<%- include('header', {title: "Add Product"}); %>
+<h4>Fill all the fields to add product</h4>
+
+<form action="/admin/add" method="post" name="regform">
+    <label for="title">Choose your title:</label>
+    <br>
+    <input type="text" name="title" placeholder="Title" required>
+    <br>
+
+    <label for="price">Choose your price:</label>
+    <br>
+    <input type="text" name="price" placeholder="Price" required>
+    <br>
+
+    <label for="description">Choose your description:</label>
+    <br>
+    <input type="text" name="description">
+    <br>
+
+    <button type="submit" class="btn btn-primary">Send</button>
+</form>
+<%- include('footer'); %>

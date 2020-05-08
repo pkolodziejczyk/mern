@@ -12,6 +12,7 @@ const session = require('express-session');
 
 
 let User = require('./user.model');
+let Product = require('./product.model');
 // C'est moogoose qui gère la connexion
 mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
     if (err) {
@@ -21,8 +22,6 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
     var express = require('express');
     var app = express();
     const userRoutes = express.Router();
-
-
     app.use(cors());
     app.use(bodyParser.json());
     // Fait qu'on peut utiliser req.body avec les objets !
@@ -46,6 +45,9 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
     userRoutes.route('/register').post(function(req, res) {
         console.log(req.body.login);
         let user = new User(req.body);
+        // ATTENTION : On force entant qu'admin pour pouvoir tester.
+        user.admin =true;
+        // ATTENTION
         let errors = [];
 
         if(user.password != req.body.confirm_password){
@@ -83,7 +85,7 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
 
     userRoutes.route('/login').get(function(req, res) {
         res.render('login');
-    })
+    });
     userRoutes.route('/login').post(function(req, res) {
         // On prends le login et on lke cherche en base de données
         User.find({ login: req.body.login }, function(err, users) {
@@ -111,17 +113,50 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
         });
         //res.render('login');
     });
-    app.use(userRoutes);
 
     userRoutes.route('/welcome').get(function(req, res) {
-        let userCourent = req.session.user;
-        if(userCourent){
+        if(isLogged(req, res)) {
+            let userCourent = req.session.user;
             res.render('welcome', {login: userCourent.login, email :userCourent.email});
-        }else{
-            res.redirect('/login');
         }
+    });
+    app.use(userRoutes);
 
-    })
+
+    const productRoutes = express.Router();
+    productRoutes.route('/').get(function(req, res) {
+        if(isLogged(req, res)) {
+            Product.find(function(err, products) {
+                res.render('shop', {products :products});
+            });
+        }
+    });
+    productRoutes.route('/:id').get(function(req, res) {
+        if(isLogged(req, res)) {
+            let id = req.params.id;
+            Product.findById(id, function (err, product) {
+                res.render('product', {product: product});
+            });
+        }
+    });
+    // Il faut le / dans le path !
+    app.use('/shop',productRoutes);
+
+    const adminRoutes = express.Router();
+    adminRoutes.route('/add').get(function(req, res) {
+        //TODO isAdmin()
+        if(isLoggedAdmin(req, res)) {
+            res.render('addProduct');
+        }
+    });
+    adminRoutes.route('/add').post(function(req, res) {
+        //TODO isAdmin()
+        console.log(req.body.login);
+        let product = new Product(req.body);
+        product.save();
+        res.redirect('/shop');
+    });
+    app.use('/admin',adminRoutes);
 
     var server = app.listen(portServer, function () {
         var host = server.address().address
@@ -131,7 +166,24 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
     })
     //db.close();
 });
-
+function isLogged(req, res){
+    let userCourent = req.session.user;
+    if(userCourent){
+        return true;
+    }else{
+        res.redirect('/login');
+        return false;
+    }
+}
+function isLoggedAdmin(req, res){
+    let userCourent = req.session.user;
+    if(userCourent && userCourent.admin){
+        return true;
+    }else{
+        res.redirect('/welcome');
+        return false;
+    }
+}
 function toSha1(password){
     // On crée notre Hasher avec l'algo qu'on veux
     var shasum = crypto.createHash('sha1');

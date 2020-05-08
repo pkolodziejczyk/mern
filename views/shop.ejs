@@ -1,0 +1,9 @@
+<%- include('header', {title: "Shop"}); %>
+<% products.forEach(function(product){ %>
+   <%= product.title %>
+   <%= product.price %>
+   <a class="nav-link" href="/shop/<%= product._id %>">Details</a>
+   <br>
+  <% }); %>
+
+<%- include('footer'); %>
