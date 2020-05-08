@@ -10,6 +10,15 @@ let Product = new Schema({
     },
     description: {
         type: String
+    },
+    //Solution 1
+    //category:{
+    //    type: [String]
+    //},
+    //Solution 2
+    categories: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category'
     }
 });
 

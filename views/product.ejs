@@ -2,6 +2,9 @@
    <%= product.title %>
    <%= product.price %>
    <%= product.description %>
+   <% if (product.categories) { %>
+      <%= product.categories.name %>
+   <% } %>
    <br>
 
 <%- include('footer'); %>

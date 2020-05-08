@@ -13,6 +13,8 @@ const session = require('express-session');
 
 let User = require('./user.model');
 let Product = require('./product.model');
+let Category = require('./category.model');
+
 // C'est moogoose qui gère la connexion
 mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
     if (err) {
@@ -131,13 +133,33 @@ mongoose.connect(url,{useUnifiedTopology: true}, function (err, db) {
             });
         }
     });
-    productRoutes.route('/:id').get(function(req, res) {
-        if(isLogged(req, res)) {
+    productRoutes.route('/:id').get(async function(req, res) {
+        //if(isLogged(req, res)) {
+
+
             let id = req.params.id;
-            Product.findById(id, function (err, product) {
+            /* TODO EXERCICE 5 Récupération des categorys
+            const cats = await Category.find();
+            console.log(cats);
+            */
+
+            Product.findById(id).populate('categories').exec().then(function(product)  {
+                //ATTION code de test
+                /* TODO EXERCICE 5 A mettre dans dans la page create product quand on veux ajouter la category.
+                let category = new Category();
+                category.name ="Coucou";
+                category.save().then(function(category)  {
+                    let newProduct = new Product({categories: category._id });
+                    newProduct.save();
+                    product.categories = category._id;
+                    product.save();
+                    console.log(product);
+                });
+                */
+                console.log(product);
                 res.render('product', {product: product});
             });
-        }
+        //}
     });
     // Il faut le / dans le path !
     app.use('/shop',productRoutes);
